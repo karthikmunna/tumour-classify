@@ -1,0 +1,48 @@
+import pandas as pd
+import numpy as np
+import scipy as sp
+import matplotlib.pyplot as plt
+from sklearn import svm
+from sklearn import tree
+from sklearn.naive_bayes import GaussianNB
+from sklearn.cross_validation import cross_val_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.svm import SVC
+train = pd.read_csv("D:\Data Mining\Work\data.csv")
+test = pd.read_csv("D:\Data Mining\Work\data.csv")
+%matplotlib inline
+train.GROUP.hist()
+plt.title('Group')
+plt.xlabel('Group No')
+plt.ylabel('No of persons belong to each group')
+cols = ['GROUP','ID','THICKNESS','SIZEUNF','SHAPEUNF','ADHESION','EPI','BARE','BLAND','NORMAL','MITOSIS']
+colsRes = ['DIAGNOSIS']
+trainArr = train.as_matrix(cols)
+trainRes = np.ravel(train.as_matrix(colsRes))
+trainArr
+trainRes
+clf = GaussianNB()
+clf.fit(trainArr,trainRes)
+testArr = test.as_matrix(cols)
+results= clf.predict(testArr)
+test['NaivePrediction'] = results
+test
+clf2=svm.SVC()
+clf2.fit(trainArr,trainRes)
+testArr = test.as_matrix(cols)
+results2= clf2.predict(testArr)
+test['svmpredictions']=results2
+test
+clf3=tree.DecisionTreeClassifier()
+clf3.fit(trainArr,trainRes)
+testArr = test.as_matrix(cols)
+results3= clf3.predict(testArr)
+test['C4.5 prediction']=results3
+test
+print("Accuracy for the breast cancer data using naive bayes")
+print(accuracy_score(trainRes, results)*100)
+probs = clf3.predict_proba(testArr)
+print(probs)
+clf.predict(np.array([1,1043999,1,1,1,1,3,4,3,7,1]))
+confusion_matrix(trainRes, results)
